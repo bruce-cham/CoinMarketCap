@@ -16,7 +16,7 @@ st.set_page_config(
 API_KEY = st.secrets.get("CMC_API_KEY", "")
 BASE_URL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest"
 
-@st.cache_data(ttl=300)  # 缓存5分钟
+@st.cache_data(ttl=15)  # 缓存5分钟
 def get_data():
     """获取加密货币数据"""
     if not API_KEY:
