@@ -11,6 +11,7 @@ from datetime import datetime
 import time
 import math
 import plotly.express as px
+from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(page_title="Crypto Terminal Web", layout="wide", initial_sidebar_state="expanded")
 
@@ -87,20 +88,27 @@ search_input = st.sidebar.text_input("搜索 (名称或符号)", value="")
 st.sidebar.markdown("---")
 st.sidebar.write("提示：在 Streamlit Cloud 中把 API Key 放到 `Secrets`（键名 `CMC_API_KEY`）。")
 
-# Auto-refresh via st.experimental_rerun or st_autorefresh
+# ------------------------
+# Auto-refresh 修复版本
+# ------------------------
 if auto_refresh:
-    st_autorefresh = st.experimental_rerun if False else None
-    # We'll use st.experimental_get_query_params + rerun approach below via st.experimental_connection? Simpler:
-    # Use st_autorefresh helper
-    from streamlit_autorefresh import st_autorefresh as _sar  # will fail if not installed
-    try:
-        _sar(interval=refresh_interval*1000, key="autorefresh")
-    except Exception:
-        # fallback: streamlit's built-in autorefresh if streamlit >= 1.16:
-        try:
-            st.experimental_rerun()
-        except Exception:
-            pass
+    # 显示刷新倒计时
+    refresh_countdown = st.sidebar.empty()
+    
+    # 使用 session_state 跟踪刷新时间
+    if "last_refresh" not in st.session_state:
+        st.session_state.last_refresh = time.time()
+    
+    current_time = time.time()
+    elapsed = current_time - st.session_state.last_refresh
+    remaining = max(0, refresh_interval - elapsed)
+    
+    refresh_countdown.info(f"⏳ {int(remaining)}秒后刷新...")
+    
+    # 如果达到刷新间隔，执行刷新
+    if elapsed >= refresh_interval:
+        st.session_state.last_refresh = current_time
+        st.rerun()
 
 # ------------------------
 # Main: fetch and show
