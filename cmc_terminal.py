@@ -50,7 +50,7 @@ def main():
     auto_refresh = st.sidebar.checkbox("启用自动刷新", value=False)
     refresh_interval = st.sidebar.selectbox(
         "刷新间隔", 
-        [30, 60, 120, 300], 
+        [5, 30, 60, 120, 300], 
         index=1,
         format_func=lambda x: f"{x} 秒"
     )
