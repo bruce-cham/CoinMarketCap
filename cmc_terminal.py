@@ -16,7 +16,7 @@ st.set_page_config(
 API_KEY = st.secrets.get("CMC_API_KEY", "")
 BASE_URL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest"
 
-@st.cache_data(ttl=15)  # 缓存5分钟
+@st.cache_data(ttl=30)  # 缓存5分钟
 def get_data():
     """获取加密货币数据"""
     if not API_KEY:
@@ -50,7 +50,7 @@ def main():
     auto_refresh = st.sidebar.checkbox("启用自动刷新", value=False)
     refresh_interval = st.sidebar.selectbox(
         "刷新间隔", 
-        [5, 30, 60, 120, 300], 
+        [30, 60, 120, 300], 
         index=1,
         format_func=lambda x: f"{x} 秒"
     )
